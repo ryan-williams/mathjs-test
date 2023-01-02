@@ -1,5 +1,5 @@
 {
-  "name": "danfo-test",
+  "name": "mathjs-test",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "danfojs": "1.1.2",
+    "mathjs": "^9.4.4",
     "next": "13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
