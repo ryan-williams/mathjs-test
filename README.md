@@ -14,7 +14,7 @@ and the app doesn't load.
 ```bash
 git clone https://github.com/ryan-williams/mathjs-test
 cd mathjs-test
-npm i
+yarn
 ```
 
 ### Or: create repro from scratch
@@ -22,7 +22,7 @@ Create app, install mathjs:
 ```bash
 npx create-next-app mathjs-test --js --no-eslint
 cd mathjs-test
-npm i --save mathjs
+yarn add mathjs
 ```
 
 #### Invoke `complex` or `fraction` in [pages/index.js](pages/index.js):
@@ -111,7 +111,7 @@ index.js?46cb:606 Uncaught TypeError: Cannot read properties of undefined (readi
 FROM node
 RUN npx create-next-app mathjs-test --js --no-eslint
 WORKDIR mathjs-test
-RUN npm i --save mathjs
+RUN yarn add mathjs
 COPY pages/index.js pages/index.js
 EXPOSE 3000/tcp
 ENV PATH="${PATH}:node_modules/.bin"
