@@ -13,11 +13,9 @@ and the app doesn't load.
 ### Create app, install mathjs:
 
 ```bash
-npx create-next-app mathjs-test --ts --eslint
+npx create-next-app mathjs-test --js --no-eslint
 cd mathjs-test
 npm i --save mathjs
-PATH="${PATH}:node_modules/.bin"
-next dev
 ```
 
 ### Create a `dfd.DataFrame` in [pages/index.js](pages/index.js):
@@ -34,6 +32,7 @@ export default function Home() {
 ## macOS: errors due to case-insensitive filesystem collision in mathjs
 Run next.js server:
 ```bash
+PATH="${PATH}:node_modules/.bin"
 next dev
 ```
 Open in browser:
@@ -44,7 +43,6 @@ open http://127.0.0.1:3000
 <details><summary>Observe warnings</summary>
 
 ```
-./node_modules/mathjs/lib/esm/type/complex/Complex.js
 There are multiple modules with names that only differ in casing.
 This can lead to unexpected behavior when compiling on a filesystem with other case-semantic.
 Use equal casing. Compare these module identifiers:
@@ -54,14 +52,8 @@ Use equal casing. Compare these module identifiers:
 * javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/complex/complex.js
     Used by 2 module(s), i. e.
     javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/complex/Complex.js
-overrideMethod @ react_devtools_backend.js:4012
-printWarnings @ hot-dev-client.js?1600:82
-handleWarnings @ hot-dev-client.js?1600:86
-processMessage @ hot-dev-client.js?1600:187
-eval @ hot-dev-client.js?1600:16
-eval @ websocket.js?a9be:39
-handleMessage @ websocket.js?a9be:38
-react_devtools_backend.js:4012 ./node_modules/mathjs/lib/esm/type/fraction/Fraction.js
+…
+/node_modules/mathjs/lib/esm/type/fraction/Fraction.js
 There are multiple modules with names that only differ in casing.
 This can lead to unexpected behavior when compiling on a filesystem with other case-semantic.
 Use equal casing. Compare these module identifiers:
@@ -74,7 +66,7 @@ Use equal casing. Compare these module identifiers:
 ```
 </details>
 
-<details><summary>and errors</summary>
+<details><summary>and error</summary>
 
 ```
 index.js?46cb:606 Uncaught TypeError: Cannot read properties of undefined (reading 'prototype')
@@ -107,12 +99,13 @@ index.js?46cb:606 Uncaught TypeError: Cannot read properties of undefined (readi
 ![](./error-screenshot.png)
 
 ## Linux/Docker: works as intended
-[docker/Dockerfile](docker/Dockerfile):
+[Dockerfile](Dockerfile):
 ```Dockerfile
 FROM node
-RUN npx create-next-app mathjs-test --ts --eslint
+RUN npx create-next-app mathjs-test --js --no-eslint
 WORKDIR mathjs-test
 RUN npm i --save mathjs
+COPY pages/index.js pages/index.js
 EXPOSE 3000/tcp
 ENV PATH="${PATH}:node_modules/.bin"
 ENTRYPOINT ["next", "dev"]
@@ -120,7 +113,7 @@ ENTRYPOINT ["next", "dev"]
 
 Build, run, open:
 ```bash
-docker build -t mathjs-test docker
+docker build -t mathjs-test .
 docker run --rm -d -p 3001:3000 mathjs-test
 open http://127.0.0.1:3001
 ```
