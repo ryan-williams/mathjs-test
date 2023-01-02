@@ -10,15 +10,22 @@ and the app doesn't load.
 
 ## Setup
 
-### Create app, install mathjs:
+### Clone this repo
+```bash
+git clone https://github.com/ryan-williams/mathjs-test
+cd mathjs-test
+npm i
+```
 
+### Or: create repro from scratch
+Create app, install mathjs:
 ```bash
 npx create-next-app mathjs-test --js --no-eslint
 cd mathjs-test
 npm i --save mathjs
 ```
 
-### Create a `dfd.DataFrame` in [pages/index.js](pages/index.js):
+#### Invoke `complex` or `fraction` in [pages/index.js](pages/index.js):
 ```javascript
 import {complex, fraction} from "mathjs"
 export default function Home() {
