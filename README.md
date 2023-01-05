@@ -94,7 +94,7 @@ open http://127.0.0.1:3000
 
 ### Observe error
 
-From [`pages/index.js#L5`](pages/index.js#L5):
+From [`pages/index.js#L7`](pages/index.js#L7):
 ```
 `Complex` class refers to a next.js page ❌ {$$typeof: Symbol(react.element), type: 'div', key: null, ref: null, props: {…}, …} ƒ Home() {
     return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)("div", {
@@ -105,7 +105,7 @@ From [`pages/index.js#L5`](pages/index.js#L5):
 
 ![](screenshots/index.js.png)
 
-Same error ([`pages/complex.js#L5`](pages/complex.js#L5):
+Same error ([`pages/complex.js#L7`](pages/complex.js#L7):
 ) at [127.0.0.1:3000/complex](http://127.0.0.1:3000/complex):
 
 ```
