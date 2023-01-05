@@ -58,6 +58,7 @@ npm i --save complex.js
 
 ```bash
 # Create pages/index.js
+mkdir -p pages
 cat >pages/index.js <<EOF
 // This should resolve to the `complex.js` NPM package, but
 // next.js/webpack rewrites it as "./complex.js"
