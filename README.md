@@ -73,7 +73,7 @@ Use equal casing. Compare these module identifiers:
     javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/fraction/Fraction.js
 ```
 
-### …and error
+### …and corresponding error
 
 ```
 index.js?46cb:606 Uncaught TypeError: Object.defineProperty called on non-object

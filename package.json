@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "complex.js": "^2.1.1",
     "mathjs": "^11.5.0",
     "next": "13.1.1",
     "react": "18.2.0",
