@@ -6,11 +6,7 @@
 - [Linux/Docker: works as intended](#docker)
 
 ## tl;dr <a id="tldr"></a>
-Next.js gets confused by the import:
-```javascript
-import Complex from "complex.js"
-```
-when [the `complex.js` NPM package](https://www.npmjs.com/package/complex.js) is present as well as a local file `./complex.js`. The import should resolve to the former, but next.js (or webpack, using next.js' default configs) appears to rewrite it like:
+When [the `complex.js` NPM package](https://www.npmjs.com/package/complex.js) is installed, and a local file `./complex.js` is present, next.js (or webpack, using next.js' default configs?) erroneously rewrites an import from the former to the latter:
 
 ```diff
 -import Complex from "complex.js"
