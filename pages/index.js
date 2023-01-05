@@ -1,11 +1,14 @@
 import Complex from 'complex.js'
 
-console.log('test complex.js', new Complex(2, 3))
+const c = new Complex(11, 22)
+if (!!c.props) {
+  console.error('`Complex` class refers to a next.js page ❌', c, Complex)
+} else if (c.re) {
+  console.log("`Complex` class is correct ✅", c, Complex)
+} else {
+  console.error("`Complex` class not recognized:", c, Complex)
+}
 
-import {complex, fraction} from "mathjs"
 export default function Home() {
-  // Either of these lines causes an error
-  // const n = complex(1, 1)
-  // const f = fraction(1, 2)
   return <div>yay</div>
 }

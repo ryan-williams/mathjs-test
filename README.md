@@ -1,42 +1,63 @@
-# mathjs issue repro
+# next.js local/remote import issue repro
 
-When `mathjs` is bundled in next.js, there are warnings about conflicting `Complex.js`/`complex.js` and `Fraction.js`/`fraction.js` files.
-
-These seem to lead to an error:
+Next.js gets confused by the import:
+```javascript
+import Complex from "complex.js"
 ```
-TypeError: Object.defineProperty called on non-object
-```
-and the app doesn't load.
+when [the `complex.js` NPM package](https://www.npmjs.com/package/complex.js) is present as well as a local file `./complex.js`. The import should resolve to the former, but next.js (or webpack, using next.js's default configs) appears to rewrite it like:
 
-## Setup
+```diff
+-import Complex from "complex.js"
++import Complex from "./complex.js"
+```
+
+See discussion at [mathjs#2870](https://github.com/josdejong/mathjs/issues/2870), and repro steps below.
+
+## Repro
 
 ### Clone this repo
 ```bash
-git clone https://github.com/ryan-williams/mathjs-test
-cd mathjs-test
+git clone https://github.com/ryan-williams/next.js-import-bug
+cd next.js-import-bug
 npm i
 ```
 
 ### Or: create repro from scratch
-Create app, install mathjs:
+Create app, install `complex.js`:
 ```bash
-npx create-next-app mathjs-test --js --no-eslint --use-npm
-cd mathjs-test
-npm i --save mathjs
+npx create-next-app next.js-import-bug --js --no-eslint --use-npm
+cd next.js-import-bug
+npm i --save complex.js
 ```
 
-#### Invoke `complex` or `fraction` in [pages/index.js](pages/index.js):
-```javascript
-import {complex, fraction} from "mathjs"
-export default function Home() {
-    // Either of these lines causes an error
-    // const n = complex(1, 1)
-    const f = fraction(1, 2)
-    return <div>yay</div>
+<details><summary>Create <code>pages/{index,complex}.js</code></summary>
+
+```bash
+# Create pages/index.js
+cat >pages/index.js <<EOF
+import Complex from 'complex.js'
+
+const c = new Complex(11, 22)
+if (!!c.props) {
+  console.error('`Complex` class refers to a next.js page ❌', c, Complex)
+} else if (c.re) {
+  console.log("`Complex` class is correct ✅", c, Complex)
+} else {
+  console.error("`Complex` class not recognized:", c, Complex)
 }
-```
 
-## macOS: errors due to case-insensitive filesystem collision in mathjs
+export default function Home() {
+  return <div>yay</div>
+}
+EOF
+
+# Create pages/complex.js with the same content
+cp pages/{index,complex}.js
+```
+</details>
+
+
+## macOS(?): errors due to
 Run next.js server:
 ```bash
 PATH="${PATH}:node_modules/.bin"
