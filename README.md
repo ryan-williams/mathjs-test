@@ -1,5 +1,11 @@
 # next.js local/remote import issue repro
 
+- [tl;dr](#tldr)
+- [Repro](#repro)
+- [macOS(?): errors due to interpreting `complex.js` as a relative path instead of an NPM package](#macOS)
+- [Linux/Docker: works as intended](#docker)
+
+## tl;dr <a id="tldr"></a>
 Next.js gets confused by the import:
 ```javascript
 import Complex from "complex.js"
@@ -13,7 +19,7 @@ when [the `complex.js` NPM package](https://www.npmjs.com/package/complex.js) is
 
 See discussion at [mathjs#2870](https://github.com/josdejong/mathjs/issues/2870), and repro steps below. The issue originally seemed to result from ambiguity on a case-insensitive macOS filesystem. However, it wasn't reproducible on a case-insensitive windows filesystem, and the repro here no longer involves case-sensitivity. I've only observed it on my macbook (macOS 12.1), but it seems likely to have to do with next.js/webpack configs.
 
-## Repro
+## Repro <a id="repro"></a>
 
 ### Clone this repo
 ```bash
@@ -56,8 +62,8 @@ cp pages/{index,complex}.js
 ```
 </details>
 
-
-## macOS(?): errors due to apparent use of relative path instead of NPM package
+<a id="macOS"></a>
+## macOS(?): errors due to interpreting `complex.js` as a relative path instead of an NPM package
 
 Run next.js server, open in browser:
 ```bash
@@ -91,7 +97,7 @@ Same error ([`pages/complex.js#L5`](pages/complex.js#L5):
 
 ![](screenshots/complex.js.png)
 
-## Linux/Docker: works as intended
+## Linux/Docker: works as intended <a id="docker"></a>
 [Dockerfile](Dockerfile):
 ```Dockerfile
 FROM node
