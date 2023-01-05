@@ -4,14 +4,14 @@ Next.js gets confused by the import:
 ```javascript
 import Complex from "complex.js"
 ```
-when [the `complex.js` NPM package](https://www.npmjs.com/package/complex.js) is present as well as a local file `./complex.js`. The import should resolve to the former, but next.js (or webpack, using next.js's default configs) appears to rewrite it like:
+when [the `complex.js` NPM package](https://www.npmjs.com/package/complex.js) is present as well as a local file `./complex.js`. The import should resolve to the former, but next.js (or webpack, using next.js' default configs) appears to rewrite it like:
 
 ```diff
 -import Complex from "complex.js"
 +import Complex from "./complex.js"
 ```
 
-See discussion at [mathjs#2870](https://github.com/josdejong/mathjs/issues/2870), and repro steps below.
+See discussion at [mathjs#2870](https://github.com/josdejong/mathjs/issues/2870), and repro steps below. The issue originally seemed to result from ambiguity on a case-insensitive macOS filesystem. However, it wasn't reproducible on a case-insensitive windows filesystem, and the repro here no longer involves case-sensitivity. I've only observed it on my macbook (macOS 12.1), but it seems likely to have to do with next.js/webpack configs.
 
 ## Repro
 
@@ -57,102 +57,70 @@ cp pages/{index,complex}.js
 </details>
 
 
-## macOS(?): errors due to
-Run next.js server:
+## macOS(?): errors due to apparent use of relative path instead of NPM package
+
+Run next.js server, open in browser:
 ```bash
-PATH="${PATH}:node_modules/.bin"
-next dev
-```
-Open in browser:
-```bash
+node_modules/.bin/next dev &
 open http://127.0.0.1:3000
 ```
 
-### Observe warnings
+### Observe error
 
+From [`pages/index.js#L5`](pages/index.js#L5):
 ```
-./node_modules/mathjs/lib/esm/type/complex/Complex.js
-There are multiple modules with names that only differ in casing.
-This can lead to unexpected behavior when compiling on a filesystem with other case-semantic.
-Use equal casing. Compare these module identifiers:
-* javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/complex/Complex.js
-    Used by 1 module(s), i. e.
-    javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/factoriesAny.js
-* javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/complex/complex.js
-    Used by 2 module(s), i. e.
-    javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/complex/Complex.js
-…
-./node_modules/mathjs/lib/esm/type/fraction/Fraction.js
-There are multiple modules with names that only differ in casing.
-This can lead to unexpected behavior when compiling on a filesystem with other case-semantic.
-Use equal casing. Compare these module identifiers:
-* javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/fraction/Fraction.js
-    Used by 1 module(s), i. e.
-    javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/factoriesAny.js
-* javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/fraction/fraction.js
-    Used by 2 module(s), i. e.
-    javascript/esm|/Users/ryan/c/mathjs-test/node_modules/mathjs/lib/esm/type/fraction/Fraction.js
+`Complex` class refers to a next.js page ❌ {$$typeof: Symbol(react.element), type: 'div', key: null, ref: null, props: {…}, …} ƒ Home() {
+    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)("div", {
+        children: "yay"
+    }, void 0, false, {
+        fileName: "/Users/ryan/c/next.js-impor…
 ```
 
-### …and corresponding error
+![](screenshots/index.js.png)
+
+Same error ([`pages/complex.js#L5`](pages/complex.js#L5):
+) at [127.0.0.1:3000/complex](http://127.0.0.1:3000/complex):
 
 ```
-index.js?46cb:606 Uncaught TypeError: Object.defineProperty called on non-object
-    at Function.defineProperty (<anonymous>)
-    at createComplexClass.isClass (Complex.js?51b2:11:1)
-    at assertAndCreate (factory.js?2286:35:1)
-    at eval (pureFunctionsAny.generated.js?b0ab:12:55)
-    at ./node_modules/mathjs/lib/esm/entry/pureFunctionsAny.generated.js (index.js?ts=1672683969845:4196:1)
-    at options.factory (webpack.js?ts=1672683969845:673:31)
-    at __webpack_require__ (webpack.js?ts=1672683969845:37:33)
-    at fn (webpack.js?ts=1672683969845:328:21)
-    at eval (mainAny.js:11:88)
-    at ./node_modules/mathjs/lib/esm/entry/mainAny.js (index.js?ts=1672683969845:4185:1)
-    at options.factory (webpack.js?ts=1672683969845:673:31)
-    at __webpack_require__ (webpack.js?ts=1672683969845:37:33)
-    at fn (webpack.js?ts=1672683969845:328:21)
-    at ./node_modules/mathjs/lib/esm/index.js (index.js?ts=1672683969845:10038:75)
-    at options.factory (webpack.js?ts=1672683969845:673:31)
-    at __webpack_require__ (webpack.js?ts=1672683969845:37:33)
-    at fn (webpack.js?ts=1672683969845:328:21)
-    at eval (index.js:7:64)
-    at ./pages/index.js (index.js?ts=1672683969845:49:1)
-    at options.factory (webpack.js?ts=1672683969845:673:31)
-    at __webpack_require__ (webpack.js?ts=1672683969845:37:33)
-    at fn (webpack.js?ts=1672683969845:328:21)
-    at eval (?44d9:5:16)
-    at eval (route-loader.js?ea34:211:51)
+`Complex` class refers to a next.js page ❌ {$$typeof: Symbol(react.element), type: 'div', key: null, ref: null, props: {…}, …} ƒ Home() {
+    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)("div", {
+        children: "yay"
+    }, void 0, false, {
+        fileName: "/Users/ryan/c/next.js-impor…
 ```
 
-![](./error-screenshot.png)
+![](screenshots/complex.js.png)
 
 ## Linux/Docker: works as intended
 [Dockerfile](Dockerfile):
 ```Dockerfile
 FROM node
-RUN npx create-next-app mathjs-test --js --no-eslint --use-npm
-WORKDIR mathjs-test
-RUN npm i --save mathjs
-COPY pages/index.js pages/index.js
-EXPOSE 3000/tcp
+RUN npx create-next-app next.js-import-bug --js --no-eslint --use-npm
+WORKDIR next.js-import-bug
+RUN npm i --save complex.js
+COPY pages/index.js pages/complex.js pages/
 ENV PATH="${PATH}:node_modules/.bin"
 ENTRYPOINT ["next", "dev"]
 ```
 
 Build, run, open:
 ```bash
-docker build -t mathjs-test .
-docker run --rm -d -p 3001:3000 mathjs-test
+docker build -t next.js-import-bug .
+docker run --rm -d -p 3001:3000 next.js-import-bug
 open http://127.0.0.1:3001
 ```
 
 Page loads+renders without errors or warnings:
 
-![](./success-screenshot.png)
+![](./screenshots/success-index.js.png)
+
+Similarly at [127.0.0.1:3001/complex](http://127.0.0.1:3001/complex)
+
+![](./screenshots/success-complex.js.png)
 
 ## Relevant versions
 * node v19.3.0
 * npm 9.2.0
-* mathjs 11.5.0
+* complex.js 2.1.1
 * next 13.1.1
 * macOS 12.1
