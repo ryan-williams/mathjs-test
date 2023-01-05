@@ -1,3 +1,5 @@
+// This should resolve to the `complex.js` NPM package, but
+// next.js/webpack rewrites it as "./complex.js"
 import Complex from 'complex.js'
 
 const c = new Complex(11, 22)

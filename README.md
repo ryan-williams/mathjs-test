@@ -6,6 +6,28 @@
 - [Linux/Docker: works as intended](#docker)
 
 ## tl;dr <a id="tldr"></a>
+<details><summary><code>pages/complex.js</code></summary>
+
+```javascript
+// This should resolve to the `complex.js` NPM package, but
+// next.js/webpack rewrites it as "./complex.js"
+import Complex from 'complex.js'
+
+const c = new Complex(11, 22)
+if (!!c.props) {
+    console.error('`Complex` class refers to a next.js page ❌', c, Complex)
+} else if (c.re) {
+    console.log("`Complex` class is correct ✅", c, Complex)
+} else {
+    console.error("`Complex` class not recognized:", c, Complex)
+}
+
+export default function Home() {
+    return <div>yay</div>
+}
+```
+</details>
+
 When [the `complex.js` NPM package](https://www.npmjs.com/package/complex.js) is installed, and a local file `./complex.js` is present, next.js (or webpack, using next.js' default configs?) erroneously rewrites an import from the former to the latter:
 
 ```diff
@@ -37,6 +59,8 @@ npm i --save complex.js
 ```bash
 # Create pages/index.js
 cat >pages/index.js <<EOF
+// This should resolve to the `complex.js` NPM package, but
+// next.js/webpack rewrites it as "./complex.js"
 import Complex from 'complex.js'
 
 const c = new Complex(11, 22)
